@@ -1,0 +1,20 @@
+frameworkVersion: ">=2.55.0"
+
+service: foundation-model-entity-resolution
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-east-1
+
+functions:
+  summation:
+    handler: handler.summation
+    memorySize: 1024
+    timeout: 5
+    events:
+      - http:
+          path: /summation
+          method: post
+          cors: true
