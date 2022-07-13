@@ -13,9 +13,19 @@ We have three main prerequisite to be able to run the project:
 
 We will go over these items in turn.
 
+### Python
+
+Setup a virtual environment with the project dependencies:
+
+* `python -m venv venv`
+* `source venv/bin/activate`
+* `pip install -r requirements.txt`
+
 ### Open AI
 
 Get an API token for GPT-3 by signing up in the [OpenAI portal](https://openai.com/api/). You can test your API is working as expected by running `API_KEY=my_key python open_ai_playground.py` in the `src` directory (replace `my_key` with your GPT-3 API token).
+
+Now, cd into the `src/serverless` folder and create there a file named `.env` (do _not_ commit it!) with the following structure `API_KEY=my_key`: this will be used automatically by `serverless` to populate an `env` with our token in the AWS lambda.
 
 ### Serverless
 
@@ -51,8 +61,15 @@ If you end up placing your external function somewhere else, _just make sure to 
 
 ### dbt
 
-TBC
+On top of installing the open source package (already included in the `requirements.txt`), make sure dbt points to your Snowflake instance with the proper [dbt_profile](https://docs.getdbt.com/dbt-cli/configure-your-profile). 
+
+To populate your target schema with the data needed for the project, cd into `src/dbt` and run `dbt seed`. Data for seeding the initial tables come from the [Walmart-Amazon dataset](https://github.com/anhaidgroup/deepmatcher/blob/master/Datasets.md), using a standard format in the literature (i.e. other datasets in the same directory should mostly work with the same exact flow, minus possibly some minor feature wrangling in dbt).
+
+Once you run the script, check your Snowflake for the new tables:
+
+![Raw tables in Snowflake](/images/raw_tables.png)
 
 ## Run entity resolution in dbt
 
-TBC
+To run the flow, simply cd into the `src/dbt` folder and type `dbt run`.
+

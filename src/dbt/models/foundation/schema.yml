@@ -1,0 +1,6 @@
+version: 2
+
+models:
+    - name: tableA_staging
+      description: "Map data to a better structure"
+

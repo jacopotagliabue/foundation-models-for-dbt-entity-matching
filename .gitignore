@@ -133,3 +133,8 @@ dmypy.json
 .serverless/
 node_modules/
 package*
+
+.DS_Store
+
+dbt.log
+dbt.log.legacy
