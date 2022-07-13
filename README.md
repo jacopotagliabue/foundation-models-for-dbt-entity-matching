@@ -19,7 +19,8 @@ However you decide to proceed to setup the connection, our code assume you creat
 
 ```CREATE OR REPLACE database external_functions;
 CREATE OR REPLACE schema external_functions.lambda;
-CREATE OR REPLACE external function external_functions.lambda.resolution(x string, y string) ... ```
+CREATE OR REPLACE external function external_functions.lambda.resolution(x string, y string) ...
+```
 
 If you end up placing your external function somewhere else, _just make sure to replace the relevant calls in the dbt files_ to make sure your SQL and your setup are consistent.
 
