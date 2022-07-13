@@ -1,12 +1,15 @@
-frameworkVersion: ">=2.55.0"
+frameworkVersion: "3"
 
 service: foundation-model-entity-resolution
+useDotenv: true
 
 provider:
   name: aws
   runtime: python3.8
   stage: dev
   region: us-east-1
+  environment:
+    API_KEY: ${env:API_KEY}
 
 functions:
   summation:
@@ -16,5 +19,14 @@ functions:
     events:
       - http:
           path: /summation
+          method: post
+          cors: true
+  resolution:
+    handler: handler.resolution
+    memorySize: 1024
+    timeout: 15
+    events:
+      - http:
+          path: /resolution
           method: post
           cors: true

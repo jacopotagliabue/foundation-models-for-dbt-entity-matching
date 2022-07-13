@@ -24,7 +24,7 @@ Make sure you have installed the [serverless CLI](https://www.serverless.com/fra
 Deploy the lambda function with two simple commands:
 
 * cd into `src/serverless`
-* run `serverless deploy`
+* run `AWS_PROFILE=tooso serverless deploy` (where `AWS_PROFILE` is the profile with serverless permissions, in case you have many on your machines - if you use the default AWS profile, you can omit the env);
 * check in your AWS console that the lambda function _and_ the corresponding AWS Gateway integration are live.
 
 Once the function is up and running, it's time to connect your Snowflake account to API Gateway.
@@ -38,7 +38,13 @@ However you decide to proceed to setup the connection, our code assume you creat
 ```
 CREATE OR REPLACE database external_functions;
 CREATE OR REPLACE schema external_functions.lambda;
-CREATE OR REPLACE external function external_functions.lambda.resolution(x string, y string) ...
+CREATE OR REPLACE external function external_functions.lambda.resolution(x varchar, y varchar) ...
+```
+
+In other words, you should be able to run this query in your Snowflake account after the setup above is completed and get a result:
+
+```
+SELECT external_functions.lambda.resolution('hello', 'world');
 ```
 
 If you end up placing your external function somewhere else, _just make sure to replace the relevant calls in the dbt files_ to make sure your SQL and your setup are consistent.
