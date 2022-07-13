@@ -1,6 +1,18 @@
 import json
 import os
+import requests
+import time
 
+
+# global OpenAI vars
+OPEN_AI_URL = 'https://api.openai.com/v1/completions'
+HEADERS = { 
+    'content-type': 'application/json', 
+    "Authorization": "Bearer {}".format(os.environ['API_KEY'])
+    }
+TEMPLATE_PROMPTING = """
+Product A is {}. Product B is {}. Are Product A and Product B the same? 
+"""
 
 def wrap_response(status_code: int, response):
     return {
@@ -43,6 +55,19 @@ def summation(event, context):
     return wrap_response(status_code, response)
 
 
+def parse_open_ai_response(text_response: str):
+    # troncate at first token
+    cleaned_token = text_response.strip().lower().split(' ')[0]
+    if cleaned_token == 'yes':
+        return True
+    elif cleaned_token == 'no':
+        return False
+    else:
+        print("====> Unexpected answer: {}".format(text_response))
+
+    return False
+
+
 def resolution(event, context):
     """
     This is the entity resolution function, which is just wrapping the original OpenAI APIs with some 
@@ -53,13 +78,36 @@ def resolution(event, context):
     """
     # debug
     print(event)
-    # just making sure we can read the API KEY
-    assert os.environ.get('API_KEY', None) is not None
+    times = []
     status_code = 200
     response = []
-    body = json.loads(event['body'])
-    rows = body['data']
-    print(rows)
-    response = [[row[0], True] for row in rows]
+    try:
+        body = json.loads(event['body'])
+        rows = body['data']
+        for row in rows:
+            start = time.time()
+            data = {
+                # TODO: should make model a parameter we can pass from Snowflake!
+                "model": "text-davinci-002",
+                # TODO: should make temp a parameter we can pass from Snowflake!
+                "temperature": 0,  
+                "max_tokens": 10,
+                "prompt": TEMPLATE_PROMPTING.format(row[1], row[2])
+            }
+            payload = json.dumps(data)
+            r = requests.post(OPEN_AI_URL, data=payload, headers=HEADERS)
+            open_ai_response = json.loads(r.text)["choices"][0]['text'].strip()
+            cnt_match = parse_open_ai_response(open_ai_response)
+            # appen the current row number (Snowflake requirement) and boolean indicating a match
+            response.append([row[0], cnt_match])
+            times.append(time.time() - start)
+        # debug
+        print(sum(times), sum(times) / len(times))
+    except Exception as err:
+        status_code = 400
+        response = str(err)
+    # print in cloudwatch for debug!
+    print(response)
+    # return the response to the client
     return wrap_response(status_code, response)
 

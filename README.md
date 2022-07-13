@@ -15,13 +15,13 @@ We will go over these items in turn.
 
 ### Open AI
 
-Get an API token for GPT-3 by signing up in the [OpenAI portal](https://openai.com/api/)
+Get an API token for GPT-3 by signing up in the [OpenAI portal](https://openai.com/api/). You can test your API is working as expected by running `API_KEY=my_key python open_ai_playground.py` in the `src` directory (replace `my_key` with your GPT-3 API token).
 
 ### Serverless
 
-Make sure you have installed the [serverless CLI](https://www.serverless.com/framework/) and you set it up properly with your [AWS](https://www.serverless.com/framework/docs/providers/aws/guide/credentials/). Note: the region in your `serverless.yml` file should be the same one in which your Snowflake account lives.
+Make sure you have installed the [serverless CLI](https://www.serverless.com/framework/) and you set it up properly with your [AWS](https://www.serverless.com/framework/docs/providers/aws/guide/credentials/); when serverless is installed, add the [plugin](https://www.serverless.com/blog/serverless-python-packaging/) to package `requirements.txt` automatically. 
 
-Deploy the lambda function with two simple commands:
+Deploy the lambda function with two simple commands (the region in your `serverless.yml` file should be the same one in which your Snowflake account lives):
 
 * cd into `src/serverless`
 * run `AWS_PROFILE=tooso serverless deploy` (where `AWS_PROFILE` is the profile with serverless permissions, in case you have many on your machines - if you use the default AWS profile, you can omit the env);

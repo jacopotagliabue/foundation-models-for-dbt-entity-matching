@@ -30,3 +30,6 @@ functions:
           path: /resolution
           method: post
           cors: true
+
+plugins:
+  - serverless-python-requirements
