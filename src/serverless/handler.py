@@ -11,7 +11,7 @@ HEADERS = {
     "Authorization": "Bearer {}".format(os.environ['API_KEY'])
     }
 TEMPLATE_PROMPTING = """
-Product A is {}. Product B is {}. Are Product A and Product B the same? 
+Product A is {}. Product B is {}. Are Product A and Product B equivalent? 
 """
 
 def wrap_response(status_code: int, response):
@@ -92,6 +92,8 @@ def resolution(event, context):
                 # TODO: should make temp a parameter we can pass from Snowflake!
                 "temperature": 0,  
                 "max_tokens": 10,
+                # TODO: we could modify the initial SQL queries to have ARRAYS, therefore using "prompt"
+                # as an array of prompts to save some roundtrip time...
                 "prompt": TEMPLATE_PROMPTING.format(row[1], row[2])
             }
             payload = json.dumps(data)

@@ -4,3 +4,15 @@ models:
     - name: tableA_staging
       description: "Map data to a better structure"
 
+    - name: tableB_staging
+      description: "Map data to a better structure"
+
+    - name: test_staging
+      description: "Map data to a better structure and convert target to boolean"
+
+    - name: entity_matching_input
+      description: "Serialize A's and B's and join them with labels, as input for the matcher"
+
+    - name: entity_matching_output
+      description: "Input table augmented with the predictions from the model"
+

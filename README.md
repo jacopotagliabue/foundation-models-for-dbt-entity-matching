@@ -61,9 +61,9 @@ If you end up placing your external function somewhere else, _just make sure to 
 
 ### dbt
 
-On top of installing the open source package (already included in the `requirements.txt`), make sure dbt points to your Snowflake instance with the proper [dbt_profile](https://docs.getdbt.com/dbt-cli/configure-your-profile). 
+On top of installing the open source package (already included in the `requirements.txt`), make sure dbt points to your Snowflake instance with the proper [dbt_profile](https://docs.getdbt.com/dbt-cli/configure-your-profile) - it may be stating the obvious, but _make sure the dbt role has access to the UDF we registered in Snowflake above_ (if not, assign the relevant privileges!). 
 
-To populate your target schema with the data needed for the project, cd into `src/dbt` and run `dbt seed`. Data for seeding the initial tables come from the [Walmart-Amazon dataset](https://github.com/anhaidgroup/deepmatcher/blob/master/Datasets.md), using a standard format in the literature (i.e. other datasets in the same directory should mostly work with the same exact flow, minus possibly some minor feature wrangling in dbt).
+To populate your target schema with the data needed for the project, cd into `src/dbt` and run `dbt seed`. Data  (in the `data` folder) for seeding the initial tables comes from the [Walmart-Amazon dataset](https://github.com/anhaidgroup/deepmatcher/blob/master/Datasets.md), using a standard format (i.e. other datasets in the same web directory should mostly work with the same exact flow, minus some minor feature wrangling in dbt).
 
 Once you run the script, check your Snowflake for the new tables:
 
