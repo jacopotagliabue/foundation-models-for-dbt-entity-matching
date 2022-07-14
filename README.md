@@ -1,6 +1,5 @@
-# foundation-models-for-dbt-entity-resolution
-Playground for using large language models into the Modern Data Stack for entity resolution
-
+# Foundation Models for Entity Matching in dbt and Snowflake
+Playground for using large language models into the Modern Data Stack for entity matching
 
 ## Overview
 
