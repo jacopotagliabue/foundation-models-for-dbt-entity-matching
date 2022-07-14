@@ -1,7 +1,7 @@
 SELECT 
     t.*,
-    'Title: ' || a.A_PRODUCT_NAME  || ' Brand: ' || IFNULL(a.A_BRAND, '') || ' Price: ' || IFNULL(a.A_PRICE, '')  AS SERIALIZED_A,
-    'Title: ' || b.B_PRODUCT_NAME  || ' Brand: ' || IFNULL(b.B_BRAND, '') || ' Price: ' || IFNULL(b.B_PRICE, '')  AS SERIALIZED_B
+    'Title: ' || a.A_PRODUCT_NAME  || ' Brand: ' || IFNULL(a.A_BRAND, '')  AS SERIALIZED_A,
+    'Title: ' || b.B_PRODUCT_NAME  || ' Brand: ' || IFNULL(b.B_BRAND, '')  AS SERIALIZED_B
 FROM 
     {{ ref('test_staging')}} as t
 JOIN    

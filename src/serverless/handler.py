@@ -11,7 +11,11 @@ HEADERS = {
     "Authorization": "Bearer {}".format(os.environ['API_KEY'])
     }
 TEMPLATE_PROMPTING = """
-Product A is {}. Product B is {}. Are Product A and Product B equivalent? 
+Product A is Title: canon mp41dhii printing calculator Brand: canon. Product B is Title: canon mp41dhii 14-digit gloview lcd two-color printing desktop calculator black red Brand: canon. Are Product A and Product B equivalent? Yes, they are.
+
+Product A is Title: epson t020201 color ink cartridge Brand: epson. Product B is Title: Title: epson t001011 color inkjet cartridge Brand: epson. Are Product A and Product B equivalent? No, they aren't.
+
+Product A is {}. Product B is {}. Are Product A and Product B equivalent?
 """
 
 def wrap_response(status_code: int, response):
@@ -57,7 +61,7 @@ def summation(event, context):
 
 def parse_open_ai_response(text_response: str):
     # troncate at first token
-    cleaned_token = text_response.strip().lower().split(' ')[0]
+    cleaned_token = text_response.strip().lower().replace(',', '').replace('.', '').replace(';', '').split(' ')[0]
     if cleaned_token == 'yes':
         return True
     elif cleaned_token == 'no':
@@ -94,7 +98,7 @@ def resolution(event, context):
                 "max_tokens": 10,
                 # TODO: we could modify the initial SQL queries to have ARRAYS, therefore using "prompt"
                 # as an array of prompts to save some roundtrip time...
-                "prompt": TEMPLATE_PROMPTING.format(row[1], row[2])
+                "prompt": TEMPLATE_PROMPTING.format(row[1], row[2]).strip()
             }
             payload = json.dumps(data)
             r = requests.post(OPEN_AI_URL, data=payload, headers=HEADERS)
