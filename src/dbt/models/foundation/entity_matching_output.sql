@@ -1,5 +1,6 @@
 WITH matching_input as 
-(
+(   
+    -- irrespectively of the sampling, make sure we have one positive example to label
     (
         SELECT 
             1000000 AS A_ID,

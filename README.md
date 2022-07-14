@@ -2,16 +2,26 @@
 Playground for using large language models into the Modern Data Stack for entity resolution
 
 
+## Overview
+
+TL;DR a real-world sketch implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?".
+
+
+
+While simple, it's pretty cool we could "port" [an academic paper](https://arxiv.org/pdf/2205.09911.pdf) to a real-world toolchain in a couple of hours; it's even cooler that, once AWS is setup, every other functional piece of the puzzle is pure SQL and can be run with no explicit infrastructure work at all (it may expensive for API reasons tough!)
+
+_Note: by running this project you may incur in API costs - be careful!_
+
 ## Setup
 
-We have three main prerequisite to be able to run the project:
+We have four main prerequisite to be able to run the project:
 
 * access to OpenAI endpoint through an API key;
 * access to AWS to deploy a lambda function (we use the serverless framework for convenience and best practice, but in theory everything below can be done manually in the console);
 * a Snowflake account properly connected to our AWS account;
 * a working dbt-core setup on Snowflake.
 
-We will go over these items in turn.
+We will go over these items in turn (feel free to skip the sessions that don't apply to you / you're familiar with).
 
 ### Python
 
@@ -71,5 +81,28 @@ Once you run the script, check your Snowflake for the new tables:
 
 ## Run entity resolution in dbt
 
-To run the flow, simply cd into the `src/dbt` folder and type `dbt run`.
+_Note (again): by running this project you may incur in API costs - be careful and proceed incrementally!_
 
+To run the flow, simply cd into the `src/dbt` folder and type `dbt run`. The dbt DAG will pre-process the raw data about Walmart and Amazon product features and serialize the information into an `ENTITY_MATCHING_INPUT` table:
+
+![Input table](/images/input.png)
+
+As a final step in the DAG, dbt will use the `external_functions.lambda.resolution` we registered in Snowflake above to run our lambda wrapper around GPT3 capabilities. The results will be parsed and convert to boolean in the lambda, and dbt will finally materialize a table containing the two input products, the true label from the dataset, and a boolean with the result of the entity matching:
+
+![Output table](/images/output.png)
+
+## TO-DOs
+
+This project has been drafted during a not-so-exciting afternoon of academic talks, so plenty of things to add / change / improve (some of which are just `TODOs` in the code). Some obvious open points:
+
+* play around with serialization of product info in `entity_matching_input.sql`;
+* play around with prompting in `handler.py`;
+* add a metrics table after the classification, to see how the model is doing;
+
+## Acknowledgements
+
+The recent paper ["Can Foundation Models Wrangle Your Data?"](https://arxiv.org/pdf/2205.09911.pdf) was the obvious source of inspiration! 
+
+## License
+
+All the code is provided with (really) no guarantee and "as is", and it is freely available under a MIT license.
