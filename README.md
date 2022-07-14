@@ -3,17 +3,40 @@ Playground for using large language models into the Modern Data Stack for entity
 
 ## Overview
 
-TL;DR a real-world sketch implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?".
+TL;DR a real-world (sketch) implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?".
 
+Matching entities is not just an interesting research problem, but it is a pretty important piece of data pipelines, especially now that all data is centralized and recognizing the same entities across different serializations is [pretty important](https://twitter.com/pdrmnvd/status/1541853280686333954?s=20&t=LG3FGFdk_h_rAf5yhHKfLQ). Inspired by the recent success of Large Language Models at, well, [lots of stuff](https://arxiv.org/pdf/2206.04615.pdf), we implement a (basically) no-code, pure SQL flow that runs entity matching through machine learning directly in dbt+Snowflake flow. To do it, we abstract away [GPT3 API](https://beta.openai.com/examples) through AWS Lambda, and leverage Snwoflake external functions to make the predictions when dbt is materializing the proper table. In a nutshell, _this_ repo builds this:
 
+![Logical flow](/images/flow.jpg)
 
-While simple, it's pretty cool we could "port" [an academic paper](https://arxiv.org/pdf/2205.09911.pdf) to a real-world toolchain in a couple of hours; it's even cooler that, once AWS is setup, every other functional piece of the puzzle is pure SQL and can be run with no explicit infrastructure work at all (it may expensive for API reasons tough!)
+If you're familiar with prompting, what happens is that we turned an entity matching task into an appropriate question for GPT3, "Are products A and B the same?" - the model generates a string (e.g. "Yes, they are") as the answer, and we intepret it back as a boolean prediction about A and B. In this way, we avoid the need to train, deploy and maintain _any machine learning model_, as we just leverage GPT3 intelligence as an API.
+
+While simple, it's pretty cool that we could "port" [an academic paper](https://arxiv.org/pdf/2205.09911.pdf) to a real-world toolchain in a couple of hours (once Snowflake-AWS link is done, which was by far the hardest thing of all); it's even cooler that, once lambda is deployed, every other functional piece of the puzzle is pure SQL and can be run with no explicit infrastructure work at all (it may expensive for API reasons tough!)
 
 _Note: by running this project you may incur in API costs - be careful!_
 
+_Note #2: this is a WIP - I will probably do a small write-up with some more explanations, but for now here's the minimal code with instructions on how to run it._
+
+
+### BONUS for non-NLP people: Why does it work _at all_?
+
+One of the most exciting discovery in NLP (if not, _the most exciting_) is the discovery that large language models (models trained _to predict the next word in a sentence_ based on huge amount of text as a training set) are ["few-shot learners"](https://arxiv.org/abs/2005.14165). What does it mean? 
+
+In a traditional [machine learning worflow](https://github.com/anhaidgroup/deepmatcher), entity matching would be performed by feeding a set of matching and non-matching pairs to a model, which would then learn pattern useful to predict matching on new, unseen pairs of object. Large language models, such as GPT3, do not need to be _trained_ for this task. As part of its knowledge, GPT3 can be told to perform the entity matching task _in English_ by providing few examples (as you would do with a kid - this is the "few-shot" learning above), and then asking a question for the pair of item you would like an answer :
+
+```
+Product A is Title: canon mp41dhii printing calculator Brand: canon. Product B is Title: canon mp41dhii 14-digit gloview lcd two-color printing desktop calculator black red Brand: canon. Are Product A and Product B equivalent? Yes, they are.
+
+Product A is Title: epson t020201 color ink cartridge Brand: epson. Product B is Title: Title: epson t001011 color inkjet cartridge Brand: epson. Are Product A and Product B equivalent?
+```
+
+While nobody knows _exactly_ what goes on inside such huge models, we are just barely scratching the surface of what they can do with _proper prompting_: in _this_ repo, you see how they can provide out of the box reasonable functionality without any manual work, training, or specific machine learning knowledge - in the end, we literally asked GPT3 to help us out _in English_.
+
+[ Note: I also gave [a talk](https://drive.google.com/file/d/1CjGLfpqQWKN46nAUYy5w1aDby1bZyrpZ/view?usp=sharing) very recently with my own unsolicited perspective on GPT3 and the like ]
+
 ## Setup
 
-We have four main prerequisite to be able to run the project:
+We have four main prerequisites to be able to run the project:
 
 * access to OpenAI endpoint through an API key;
 * access to AWS to deploy a lambda function (we use the serverless framework for convenience and best practice, but in theory everything below can be done manually in the console);
@@ -90,13 +113,20 @@ As a final step in the DAG, dbt will use the `external_functions.lambda.resoluti
 
 ![Output table](/images/output.png)
 
+_Et voilà_, we now have a DAG that merge data from different sources and tells us which Walmart product matches with an Amazon one! 
+
+To save money, please note the output table is very sample: you can change the sampling parameter in the query if you wish to change how the table is produced.
+
 ## TO-DOs
 
-This project has been drafted during a not-so-exciting afternoon of academic talks, so plenty of things to add / change / improve (some of which are just `TODOs` in the code). Some obvious open points:
+The entire project has been designed during a not-so-exciting afternoon of academic talks, so plenty of things to add / change / improve (some of which are just `TODOs` in the code). Some obvious open points:
 
-* play around with serialization of product info in `entity_matching_input.sql`;
-* play around with prompting in `handler.py`;
-* add a metrics table after the classification, to see how the model is doing;
+* following the original paper, we could play around with serialization of product info in `entity_matching_input.sql` and with prompting in `handler.py`: performance can likely improve with some prompting work;
+* we should add a KPI table after the prediction, to see / visualize how the model is doing (reproducing the full paper tables would be also cool, for example);
+* optimizing external calls - if you wish to scale up (budget permitting) to bigger datasets, we should optimize a bit calls to OpenAI; in general, it's not clear to me how Snowflake batches requests over bigger dataframes (if at all), so certainly some more thinking is needed here;
+* of course, traditional machine learning and few-shot inference are not incompatible: you could think of designing a flow where GPT3 is used initially to seed a database of pairs (weak supervision, so to speak), and then a cheaper, traditional model is trained on these pairs to run prediction at scale.
+
+TBC!
 
 ## Acknowledgements
 
@@ -104,4 +134,4 @@ The recent paper ["Can Foundation Models Wrangle Your Data?"](https://arxiv.org/
 
 ## License
 
-All the code is provided with (really) no guarantee and "as is", and it is freely available under a MIT license.
+All the code is provided with (really) no guarantees and "as is", and it is freely available under a MIT license.
