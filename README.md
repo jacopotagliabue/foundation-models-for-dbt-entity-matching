@@ -37,7 +37,7 @@ Are Product A and Product B equivalent?
 
 While nobody knows _exactly_ what goes on inside such huge models, we are just barely scratching the surface of what they can do with _proper prompting_: in _this_ repo, you see how they can provide out of the box reasonable functionality without any manual work, training, or specific machine learning knowledge - in the end, we literally asked GPT3 to help us out _in English_.
 
-[ Note: I also gave [a talk](https://drive.google.com/file/d/1CjGLfpqQWKN46nAUYy5w1aDby1bZyrpZ/view?usp=sharing) very recently with my own unsolicited perspective on GPT3 and the like ]
+If you're curious about large language models, I recently gave [a talk](https://drive.google.com/file/d/1CjGLfpqQWKN46nAUYy5w1aDby1bZyrpZ/view?usp=sharing) with my own unsolicited perspective on today's NLP.
 
 ## Setup
 
@@ -127,12 +127,11 @@ To save money, please note the output table is very small: you can change the sa
 
 The entire project has been designed during a not-so-exciting afternoon of academic talks, so plenty of things to add / change / improve (some of which are just `TODOs` in the code). Some obvious open points:
 
+* while we showcase prediction on ready-made pairs, building the pairs to _then_ judge the matching is part of the [task in the real-world](https://arxiv.org/pdf/1905.06167.pdf) - given the possibility of using several embedding techniques for pre-filtering (from APIs to small BERT models inside a lambda), it should be possible to do a version 2 that is even more realistic, but still dbt-friendly;
 * following the original paper, we could play around with serialization of product info in `entity_matching_input.sql` and with prompting in `handler.py`: performance can likely improve with some prompting work;
 * we should add a KPI table after the prediction, to see / visualize how the model is doing (reproducing the full paper tables would be also cool, for example);
 * if you wish to scale up (budget permitting) to bigger datasets, we should optimize a bit the calls we make to OpenAI; in general, it's not clear to me how Snowflake batches requests over bigger dataframes (if at all), so certainly some more thinking is needed here;
 * of course, traditional machine learning and few-shot inference are not incompatible: you could think of designing a flow where GPT3 is used initially to seed a database of pairs (weak supervision, so to speak), and then a cheaper, traditional model is trained on these pairs to run prediction at scale.
-
-TBC!
 
 ## Acknowledgements
 
