@@ -3,7 +3,7 @@ Playground for using large language models into the Modern Data Stack for entity
 
 ## Overview
 
-TL;DR a real-world (sketch) implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?".
+TL;DR a real-world (sketch) implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?". If you want to know more about the context and background for this work, che the TDS [blog post](https://towardsdatascience.com/is-this-you-entity-matching-in-the-modern-data-stack-with-large-language-models-19a730373b26) in collaboration with [Avanika](https://github.com/ANarayan).
 
 Matching entities is not just an interesting research problem, but it is a pretty important piece of data pipelines, especially now that all data is centralized and recognizing the entities across different serializations is [pretty important](https://twitter.com/pdrmnvd/status/1541853280686333954?s=20&t=LG3FGFdk_h_rAf5yhHKfLQ). Inspired by the recent success of Large Language Models at, well, [lots of stuff](https://arxiv.org/pdf/2206.04615.pdf), we implement a (basically) no-code, pure SQL flow that runs entity matching directly in dbt+Snowflake flow. To do it, we abstract away [GPT3 API](https://beta.openai.com/examples) through AWS Lambda, and leverage Snwoflake external functions to make the predictions when dbt is materializing the proper table. In a nutshell, _this_ repo builds this:
 
@@ -15,7 +15,7 @@ While simple, it's pretty cool that we could "port" [an academic paper](https://
 
 _Note: by running this project you may incur in API costs - be careful!_
 
-_Note #2: this is a WIP - I will probably do a small write-up with some more explanations, but for now here's the minimal code with instructions on how to run it._
+_Note #2: this is a one-day project - there's the minimal code with instructions on how to run it, but everything can be improved! A write-up of the experience can be found [here](https://towardsdatascience.com/is-this-you-entity-matching-in-the-modern-data-stack-with-large-language-models-19a730373b26)._
 
 ### BONUS for non-NLP people: Why does it work _at all_?
 
