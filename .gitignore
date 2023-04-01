@@ -140,3 +140,5 @@ dbt.log
 dbt.log.legacy
 
 *.csv
+
+*.duckdb

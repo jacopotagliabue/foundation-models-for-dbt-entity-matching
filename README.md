@@ -1,6 +1,13 @@
 # Foundation Models for Entity Matching in dbt and Snowflake
 Playground for using large language models into the Modern Data Stack for entity matching
 
+## Update!
+
+*IMPORTANT*: The original dbt + Snowflake project below has now *also* available in a local version with a smaller footprint, thanks to [marvin](https://www.askmarvin.ai/getting_started/installation/) and [dbt-duckdb](https://github.com/jwills/dbt-duckdb). Therefore:
+
+* all the setup instructions below are still valid - note the original project is untouched, and it is not contained in the `src/original` folder, together with its `requirements.txt` file;
+* the new tiny setup is self-contained, and can be accessed in the `marvin-duck` folder - check the brief README there to get started, but please continue reading this document for the motivation behind the project and how it works. If you like the new version, please let us know!
+
 ## Overview
 
 TL;DR a real-world (sketch) implementation for the Modern Data Stack of the ideas in "Can Foundation Models Wrangle Your Data?". If you want to know more about the context and background for this work, che the TDS [blog post](https://towardsdatascience.com/is-this-you-entity-matching-in-the-modern-data-stack-with-large-language-models-19a730373b26) in collaboration with [Avanika](https://github.com/ANarayan).
