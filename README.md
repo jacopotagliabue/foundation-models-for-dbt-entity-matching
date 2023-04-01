@@ -5,8 +5,8 @@ Playground for using large language models into the Modern Data Stack for entity
 
 *IMPORTANT*: The original dbt + Snowflake project below has now *also* available in a local version with a smaller footprint, thanks to [marvin](https://www.askmarvin.ai/getting_started/installation/) and [dbt-duckdb](https://github.com/jwills/dbt-duckdb). Therefore:
 
-* all the setup instructions below are still valid - note the original project is untouched, and it is not contained in the `src/original` folder, together with its `requirements.txt` file;
-* the new tiny setup is self-contained, and can be accessed in the `marvin-duck` folder - check the brief README there to get started, but please continue reading this document for the motivation behind the project and how it works. If you like the new version, please let us know!
+* all the setup instructions below are still valid *for the full warehouse-based pipeline* - note that the original project is untouched, and it is now contained in the `src/original` folder, together with its `requirements.txt` file;
+* the new "poor man's setup" is self-contained, and can be accessed in the `marvin-duck` folder - check the brief README there to get started, but please continue reading this document for the motivation behind the project and how it works. If you like the new version, please let us know!
 
 ## Overview
 
