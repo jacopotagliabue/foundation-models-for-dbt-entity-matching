@@ -1,9 +1,11 @@
 """
 
-Script to run an "entity matching model" on the output table
-stored by the dbt run (in the local duckdb database).
+Script to run an "entity matching pipeline" using SQL (dbt) + Python (marvin). The model uses dbt to prepare the data,
+sand marvin to generate a label for each row.
 
-The model uses marvin function to generate a label for each row.
+To generate a label for each row, we re-use the same prompting in the original lambda
+(see the serverless folder in this project), which comes from the wisdom in the paper: 
+https://arxiv.org/pdf/2205.09911.pdf.
 
 """
 
@@ -25,13 +27,16 @@ def are_the_two_products_the_same(
     """
 
 
-def check_out_results(
+def run_entity_resolution_pipeline(
     duck_db_file : str,
-    output_dbt_model: str
-):
+    output_dbt_model: str,
+    dbt_project_dir: str
+):  
     import duckdb
     import pandas as pd
-
+    # first prepare the data with dbt on duckdb
+    pre_process_data(dbt_project_dir)
+    # now connect to the dataset
     con = duckdb.connect(duck_db_file)
     df = con.sql('SELECT * FROM "marvin"."main"."{}"'.format(output_dbt_model)).df() 
     # visual debug
@@ -47,7 +52,21 @@ def check_out_results(
     # TODO: do more cool stuff here with this data!
 
     return
+
+
+def pre_process_data(dbt_project_dir: str):
+    """
+    Run `dbt run` from the dbt folder, to get the data in good shape
+    """
+    import subprocess
+    result = subprocess.run(
+        ['dbt', 'run'],
+        stdout=subprocess.PIPE, 
+        text=True, cwd=dbt_project_dir)
+    print(result.stdout)
     
+    return
+
 
 if __name__ == "__main__":
     # TODO: note that this is a hardcoded info, which is not ideal
@@ -55,7 +74,9 @@ if __name__ == "__main__":
     # the dbt files for this and just report the variable here
     DUCK_DB_FILE = "marvin.duckdb"
     OUTPUT_DBT_MODEL = "entity_matching_input"
-    check_out_results(
+    DBT_PROJECT_DIR  = 'dbt'
+    run_entity_resolution_pipeline(
         DUCK_DB_FILE,
-        OUTPUT_DBT_MODEL
+        OUTPUT_DBT_MODEL,
+        DBT_PROJECT_DIR
         )
