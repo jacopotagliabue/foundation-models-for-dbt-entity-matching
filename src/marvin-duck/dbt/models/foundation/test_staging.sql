@@ -1,5 +1,5 @@
 SELECT 
     ltable_id::INT as A_ID,
     rtable_id::INT as B_ID,
-    label AS LABEL
+    CASE WHEN label=0 THEN FALSE ELSE TRUE END AS LABEL
 FROM {{ ref('test') }}

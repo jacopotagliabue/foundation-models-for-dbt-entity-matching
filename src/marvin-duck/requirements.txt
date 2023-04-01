@@ -1,4 +1,4 @@
-dbt-duckdb==1.3.4
+dbt-duckdb==1.4.1
 marvin==0.6.2
 pandas==1.5.3
 pyarrow==11.0.0

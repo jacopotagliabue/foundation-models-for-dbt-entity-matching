@@ -142,3 +142,4 @@ dbt.log.legacy
 *.csv
 
 *.duckdb
+*.duckdb.wal
